@@ -111,7 +111,7 @@ The same principle applies as to why it's cheaper to call `internal` functions r
 
 ## Function modifiers
 
-This is a fascinating one because a few weeks ago, I was debugging this error from one of our students and they were experiencing the error “Stack too deep”. This usually happens when you declare a lot of variables in your function and the available stack space for that function is no longer available. As we saw in the Ethereum Storage level, the EVM only allows upto 16 variables within a single function as that it cannot perform operations beyond 16 levels of depth in the stack.
+This is a fascinating one because a few weeks ago, I was debugging this error from one of our students and they were experiencing the error “Stack too deep”. This usually happens when you declare a lot of variables in your function and the available stack space for that function is no longer available. As we saw in the Ethereum Storage level, the EVM only allows up to 16 variables within a single function as that it cannot perform operations beyond 16 levels of depth in the stack.
 
 Now even after moving a lot of the require statements in the `modifier` it wasn't helping because function modifiers use the same stack as the function on which they are put. To solve this issue we used an `internal` function inside the `modifier` because `internal` functions don't share the same restricted stack as the `original function` but `modifier` does.
 
