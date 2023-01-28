@@ -1,4 +1,4 @@
-# ⛽ Gas Optimizations in Solidity
+# Gas Optimizations in Solidity
 
 In this tutorial, we will learn about some of the gas optimization techniques in Solidity. This has been one of our most-requested levels, so let's get started without further ado 👀
 
@@ -41,25 +41,25 @@ It's also important to note that elements in `memory` and `calldata` cannot be p
 Changing storage variables requires more gas than variables in memory.
 It's better to update storage variables at the end after all the logic has lready been implemented.
 
-So given two samples of code
+So given two samples of code 
 
 ```solidity
 contract A {
     uint public counter = 0;
-
+    
     function count() {
         for(uint i = 0; i < 10; i++) {
             counter++;
         }
     }
-
+    
 }
 ```
 
 ```solidity
 contract B {
     uint public counter = 0;
-
+    
     function count() {
         uint copyCounter;
         for(uint i = 0; i < 10; i++) {
@@ -67,7 +67,7 @@ contract B {
         }
         counter = copyCounter;
     }
-
+    
 }
 ```
 
@@ -76,8 +76,7 @@ The second sample of code is more gas optimized because we are only writing to t
 <Quiz questionId="bd7cd38d-d7f2-4078-a282-c5a7adde7405" />
 
 ## Fixed length and Variable-length variables
-
-We talked about how fixed length and variable length variables are stored. Fixed-length variables are stored in a stack whereas variable-length variables are stored in a heap.
+We talked about how fixed length and variable length variables are stored. Fixed-length variables are stored in a stack whereas variable-length variables are stored in a heap. 
 
 Essentially why this happens is because in a stack you exactly know where to find a variable and its length whereas in a heap there is an extra cost of traversing given the variable nature of the variable
 
@@ -101,7 +100,7 @@ The second example is more gas optimized because all the variables are of fixed 
 
 Calling functions in solidity can be very gas-intensive, its better you call one function and extract all data from it than call multiple functions
 
-Recall the `public` functions are those which can be called both externally (by users and other smart contracts) and internally (from another function in the same contract).
+Recall the `public` functions are those which can be called both externally (by users and other smart contracts) and internally (from another function in the same contract). 
 
 However, when your contract is creating functions that will only be called externally it means the contract itself cant call these functions, it's better you use the `external` keyword instead of `public` because all the input variables in `public` functions are copied to memory which costs gas whereas for `external` functions input variables are stored in `calldata` which is a special data location used to store function arguments and it requires less gas to store in calldata than in memory
 
@@ -125,7 +124,6 @@ Libraries are stateless contracts that don't store any state. Now when you call 
 There is a small caveat however. If you are writing your own libraries, you will need to deploy them and pay gas - but once deployed, it can be reused by other smart contracts without deploying it themselves. Since they don't store any state, libraries only need to be deployed once to the blockchain and are assigned an address that the Solidity compiler is smart enough to figure out itself. Therefore, if you use libraries from OpenZeppelin for example, they will not add to your deployment cost.
 
 ## Short Circuiting Conditionals
-
 If you are using (||) or (&&) it's better to write your conditions in such a way so that the least functions/variable values are executed or retrieved in order to determine if the entire statement is true or false.
 
 Since conditional checks will stop the second they find the first value which satisfies the condition, you should put the variables most likely to validate/invalidate the condition first. In OR conditions (||), try to put the variable with the highest likelihood of being `true` first, and in AND conditions (&&), try to put the variable with the highest likelihood of being `false` first. As soon as that variable is checked, the conditional can exit without needing to check the other values, thereby saving gas.
@@ -133,30 +131,74 @@ Since conditional checks will stop the second they find the first value which sa
 <Quiz questionId="dc5793a3-18c1-41f7-987d-cc3ae3bc0f18" />
 
 ## Free up Storage
-
 Since storage space costs gas, you can actually free up storage and delete unnecessary data to get gas refunds. So if you no longer need some state values, use the `delete` keyword in Solidity for some gas refunds.
 
 ## Short Error Strings
-
 Make sure that the error strings in your require statements are of very short length, the more the length of the string, the more gas it will cost.
 
 ```solidity
 require(counter >= 100, "NOT REACHED"); // Good
 require(balance >= amount, "Counter is still to reach the value greater than or equal to 100, ............................................";
 ```
-
-The first requirement is more gas optimized than the second one.
+The first requirement is more gas optimized than the second one
 
 > NOTE: In newer versions of Solidity, there are now custom errors using the `error` keyword which behave very similar to `events` and can achieve similar gas optimizations.
+----
 
----
+
+## Declaring the constructor payable
+Declaring the constructor as payable can potentially save a small amount of gas when deploying a contract in Solidity. This is because the Solidity compiler will skip a set of opcodes that check whether the constructor is payable at runtime if the constructor is declared as payable, resulting in a smaller contract bytecode and fewer gas units required to execute it.What this actually does is that it skips this set of opcodes :
+* ```CALLVALUE```
+* ```DUP1```
+* ```ISZERO```
+* ```JUPMP1```
+* ```PUSH1```
+* ```DUP1```
+* ```REVERT```
+* ```JUMPDEST```
+* ```POP```
+if you were to convert this to solidity this equal to:
+```solidity
+ if(msg.value != 0) revert();
+```
+## Use preIncrement instead of postIncrement to save gas
+consider this two funtions:
+```solidity
+ uint256 num;
+ 
+ function postIncrement() external {
+   num++;
+ }
+  
+ function preIncrement() external {
+   ++num;
+ }
+ 
+```
+while both the functions perform the same functions, they don't actually cost the same gas, suprising right?,let's delve into this:
+In Solidity, the preIncrement operator (++x) increments a value and returns the incremented result, while the postIncrement operator (x++) returns the original value and then increments the value.
+
+The preIncrement operator can be implemented using a single ADD opcode, which increments the value of a storage slot or a memory location. On the other hand, the postIncrement operator requires two separate operations: one to retrieve the original value and another to increment the value.
+
+As a result, using preIncrement instead of postIncrement can potentially save gas by reducing the number of operations required
+
+## Declare variables that can be set to immutable as immutable
+let's assume you have a code that has a variable and that variable stores a value at construction time(before deployment),the variable get stored in code rather than storage,if you've read the yellow paper you should know every call to read from the storage costs 2100 gas comapred to reading from the code which only costs 3 gas
+```solidity
+ uint8 immmutable num;
+ uint8 immutable num2 = 34;
+ constructor(uint256 _num) payable {
+   num = _num;
+ }
+```
 
 Thank you all for staying tuned to this article 🚀 Hope you liked it :)
 
 <Quiz questionId="c2222fea-abeb-4566-b981-01f85853592b" />
 
-## 👋 Conclusion
+## References
 
-Hope you learnt something from this level. If you have any questions or feel stuck or just want to say Hi, hit us up on our [Discord](https://discord.gg/learnweb3). We look forward to seeing you there!
+- Mudit Gupta - [Gas Optimizations Tips](https://mudit.blog/solidity-gas-optimization-tips/) and [Gas Optimizations Tips Part - 2](https://mudit.blog/solidity-tips-and-tricks-to-save-gas-and-reduce-bytecode-size/)
 
 <SubmitQuiz />
+
