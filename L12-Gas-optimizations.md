@@ -32,7 +32,7 @@ uint256 num2;
 
 The second one is better because in the second one solidity compiler will put all the `uint8`'s in one storage slot but in the first case it will put `uint8 num1` in one slot but now the next one it will see is a `uint256` which is in itself requires 32 bytes cause `256/8 bits = 32 bytes` so it can't be put in the same storage slot as `uint8 num1` so now it will require another storage slot. After that `uint8 num3, num4, num5` will be put in another storage slot. Thus the second example requires 2 storage slots as compared to the first example which requires 3 storage slots.
 
-It's also important to note that elements in `memory` and `calldata` can not be packed and are not optimized by solidity's compiler.
+It's also important to note that elements in `memory` and `calldata` cannot be packed and are not optimized by solidity's compiler.
 
 <Quiz questionId="3f7890cd-ffdb-4fa2-8241-df57a9f4533e" />
 
@@ -111,7 +111,7 @@ The same principle applies as to why it's cheaper to call `internal` functions r
 
 ## Function modifiers
 
-This is a fascinating one because a few weeks ago, I was debugging this error from one of our students and they were experiencing the error “Stack too deep”. This usually happens when you declare a lot of variables in your function and the available stack space for that function is no longer available. As we saw in the Ethereum Storage level, the EVM only allows up to 16 variables within a single function as that it can not perform operations beyond 16 levels of depth in the stack.
+This is a fascinating one because a few weeks ago, I was debugging this error from one of our students and they were experiencing the error “Stack too deep”. This usually happens when you declare a lot of variables in your function and the available stack space for that function is no longer available. As we saw in the Ethereum Storage level, the EVM only allows up to 16 variables within a single function as that it cannot perform operations beyond 16 levels of depth in the stack.
 
 Now even after moving a lot of the require statements in the `modifier` it wasn't helping because function modifiers use the same stack as the function on which they are put. To solve this issue we used an `internal` function inside the `modifier` because `internal` functions don't share the same restricted stack as the `original function` but `modifier` does.
 
