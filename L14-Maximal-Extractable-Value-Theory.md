@@ -16,7 +16,7 @@ Typically, MEV happens when a certain transaction must be included in a certain 
 
 ## 🫶 MEV Extraction
 
-In theory, MEV could only be extracted by miners, and this was true in the early days. With miners having control over block production, they could guarauntee for themselves the execution of a profitable transaction, and just not include the transaction in the block if it didn't turn out to be profitable. Today, however, a large portion of MEV is extracted by independent network participants referred to as `Searchers`. We will learn more about exactly what they do, but in a nutshell they run complex algorithms to find opportunities for profiting on chain and have bots to automatically submit those transactions to the network.
+In theory, MEV could only be extracted by miners, and this was true in the early days. With miners having control over block production, they could guarantee for themselves the execution of a profitable transaction, and just not include the transaction in the block if it didn't turn out to be profitable. Today, however, a large portion of MEV is extracted by independent network participants referred to as `Searchers`. We will learn more about exactly what they do, but in a nutshell they run complex algorithms to find opportunities for profiting on chain and have bots to automatically submit those transactions to the network.
 
 Miners still continue to get a portion of the MEV profit made by searchers, as searchers generally tend to pay very high gas fees to try and ensure their transaction is included in the block. We'll look at some example cases shortly.
 
@@ -112,7 +112,7 @@ In fact, this exact approach has led to countless people recovering (hundreds of
 
 # Pros
 
-Its good for many Defi projects because arbitrage corrects the price between multiple DEX's and protocols rely on liquidations to ensure that the borrowers don't fall below their collateral which hurts the DeFi protocol. Also, use cases like recovering stolen funds are arguably a net-positive that helps the space.
+It's good for many Defi projects because arbitrage corrects the price between multiple DEX's and protocols rely on liquidations to ensure that the borrowers don't fall below their collateral which hurts the DeFi protocol. Also, use cases like recovering stolen funds are arguably a net-positive that helps the space.
 
 # Cons
 
