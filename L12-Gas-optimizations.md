@@ -30,16 +30,16 @@ uint8 num5;
 uint256 num2;
 ```
 
-The second one is better because in the second one solidity compiler will put all the `uint8`'s in one storage slot but in the first case it will put `uint8 num1` in one slot but now the next one it will see is a `uint256` which is in itself requires 32 bytes cause `256/8 bits = 32 bytes` so it cant be put in the same storage slot as `uint8 num1` so now it will require another storage slot. After that `uint8 num3, num4, num5` will be put in another storage slot. Thus the second example requires 2 storage slots as compared to the first example which requires 3 storage slots.
+The second one is better because in the second one solidity compiler will put all the `uint8`'s in one storage slot but in the first case it will put `uint8 num1` in one slot but now the next one it will see is a `uint256` which is in itself requires 32 bytes cause `256/8 bits = 32 bytes` so it can't be put in the same storage slot as `uint8 num1` so now it will require another storage slot. After that `uint8 num3, num4, num5` will be put in another storage slot. Thus the second example requires 2 storage slots as compared to the first example which requires 3 storage slots.
 
-It's also important to note that elements in `memory` and `calldata` cannot be packed and are not optimized by solidity's compiler.
+It's also important to note that elements in `memory` and `calldata` can not be packed and are not optimized by solidity's compiler.
 
 <Quiz questionId="3f7890cd-ffdb-4fa2-8241-df57a9f4533e" />
 
 ## Storage vs Memory
 
 Changing storage variables requires more gas than variables in memory.
-It's better to update storage variables at the end after all the logic has lready been implemented.
+It's better to update storage variables at the end after all the logic has already been implemented.
 
 So given two samples of code
 
@@ -111,7 +111,7 @@ The same principle applies as to why it's cheaper to call `internal` functions r
 
 ## Function modifiers
 
-This is a fascinating one because a few weeks ago, I was debugging this error from one of our students and they were experiencing the error “Stack too deep”. This usually happens when you declare a lot of variables in your function and the available stack space for that function is no longer available. As we saw in the Ethereum Storage level, the EVM only allows up to 16 variables within a single function as that it cannot perform operations beyond 16 levels of depth in the stack.
+This is a fascinating one because a few weeks ago, I was debugging this error from one of our students and they were experiencing the error “Stack too deep”. This usually happens when you declare a lot of variables in your function and the available stack space for that function is no longer available. As we saw in the Ethereum Storage level, the EVM only allows up to 16 variables within a single function as that it can not perform operations beyond 16 levels of depth in the stack.
 
 Now even after moving a lot of the require statements in the `modifier` it wasn't helping because function modifiers use the same stack as the function on which they are put. To solve this issue we used an `internal` function inside the `modifier` because `internal` functions don't share the same restricted stack as the `original function` but `modifier` does.
 
@@ -120,7 +120,7 @@ Now even after moving a lot of the require statements in the `modifier` it wasn'
 
 ## Use libraries
 
-Libraries are stateless contracts that don't store any state. Now when you call a public function of a library from your contract, the bytecode of that function doesn't get deployed with your contract, and thus you can save some gas costs. For example, if you contract has functions to sort or to do maths etc. You can put them in a library and then call these library functions to do the maths or sorting for your contract. To read more about libraries follow this [link](https://jeancvllr.medium.com/solidity-tutorial-all-about-libraries-762e5a3692f9).
+Libraries are stateless contracts that don't store any state. Now when you call a public function of a library from your contract, the bytecode of that function doesn't get deployed with your contract, and thus you can save some gas costs. For example, if your contract has functions to sort or to do maths etc. You can put them in a library and then call these library functions to do the maths or sorting for your contract. To read more about libraries follow this [link](https://jeancvllr.medium.com/solidity-tutorial-all-about-libraries-762e5a3692f9).
 
 There is a small caveat however. If you are writing your own libraries, you will need to deploy them and pay gas - but once deployed, it can be reused by other smart contracts without deploying it themselves. Since they don't store any state, libraries only need to be deployed once to the blockchain and are assigned an address that the Solidity compiler is smart enough to figure out itself. Therefore, if you use libraries from OpenZeppelin for example, they will not add to your deployment cost.
 
