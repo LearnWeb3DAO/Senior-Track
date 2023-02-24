@@ -1,4 +1,4 @@
-# 🌳 Creating large aidrops in a gas-efficient way using Merkle Trees
+# 🌳 Creating large airdrops in a gas-efficient way using Merkle Trees
 
 Merkle Trees are a fundamental concept in blockchain technology. They're a special kind of binary tree that is used to encode large chunks of information. The cool thing about Merkle Trees is that they kind of 'build up' from the bottom-up and allow you to verify if some value is present in the tree or not without having to loop over every element of the tree. This can be quite useful, as we will see. 🧐
 
