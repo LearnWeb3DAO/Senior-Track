@@ -10,7 +10,7 @@ Through this tutorial, we will learn why its important to correctly understand h
 
 ## 😕 Wait, what?
 
-Lets start by understanding how this works.
+Let's start by understanding how this works.
 
 The important thing to note when using `.delegatecall()` is that the context the original contract is passed to the target, and all state changes in the target contract reflect on the original contract's state and not on the target contract's state even though the function is being executed on the target contract.
 
@@ -27,9 +27,9 @@ In Ethereum, a function can be represented as `4 + 32*N` bytes where `4 bytes` a
 <Quiz questionId="b350a0d5-562c-43e9-88b9-f114bb4600c8" />
 <Quiz questionId="87906629-bd28-4947-b523-bec77b8f2a2a" />
 
-We have two contracts `Student.sol` and `Calculator.sol`. We dont know the ABI of `Calculator.sol` but we know that their exists an `add` function which takes in two `uint`'s and adds them up within the `Calculator.sol`
+We have two contracts `Student.sol` and `Calculator.sol`. We don't know the ABI of `Calculator.sol` but we know that their exists an `add` function which takes in two `uint`'s and adds them up within the `Calculator.sol`
 
-Lets see how we can use `delegateCall` to call this function from `Student.sol`
+Let's see how we can use `delegateCall` to call this function from `Student.sol`
 
 ```solidity
 pragma solidity ^0.8.4;
@@ -68,7 +68,7 @@ We used `abi.encodeWithSignature`, also the same as `abi.encodeWithSelector`, wh
 
 All this when concatenated is passed into the `delegatecall` method which is called upon the address of the calculator contract.
 
-The actual addition part is not that interesting, what's interesting is that the `Calculator` contract actually sets some state variables. But remember when the values are getting assigned in `Calcultor` contract, they are actually getting assigned to the storage of the `Student` contract because deletgatecall uses the storage of the original contract when executing the function in the target contract. So what exactly will happen is as follows:
+The actual addition part is not that interesting, what's interesting is that the `Calculator` contract actually sets some state variables. But remember when the values are getting assigned in `Calculator` contract, they are actually getting assigned to the storage of the `Student` contract because deletgatecall uses the storage of the original contract when executing the function in the target contract. So what exactly will happen is as follows:
 
 ![](https://i.imgur.com/oVhXQas.png)
 
@@ -107,7 +107,7 @@ But, since `.delegatecall()` modifies the storage of the contract calling the fu
 
 ### Setup
 
-Lets build an example where you can experience how the the attack happens. Start by creating a new project directory.
+Let's build an example where you can experience how the attack happens. Start by creating a new project directory.
 
 ```bash
 mkdir delegate-call
@@ -196,7 +196,7 @@ contract Attack {
 
 The attacker will first deploy the `Attack.sol` contract and will take the address of a `Good` contract in the constructor. He will then call the `attack` function which will further initially call the setNum function present inside `Good.sol`
 
-Intresting point to note is the argument with which the setNum is initially called, its an address typecasted into a uint256, which is it's own address. After `setNum` function within the `Good.sol` contract recieves the address as a uint, it further does a `delegatecall` to the `Helper` contract because right now the `helper` variable is set to the address of the `Helper` contract.
+Interesting point to note is the argument with which the setNum is initially called, its an address typecasted into a uint256, which is it's own address. After `setNum` function within the `Good.sol` contract receives the address as a uint, it further does a `delegatecall` to the `Helper` contract because right now the `helper` variable is set to the address of the `Helper` contract.
 
 Within the `Helper` contract when the setNum is executed, it sets the `_num` which in our case right now is the address of `Attack.sol` typecasted into a uint into num. Note that because `num` is located at `Slot 0` of `Helper` contract, it will actually assign the address of `Attack.sol` to `Slot 0` of `Good.sol`. Woops... You may see where this is going. `Slot 0` of `Good` is the `helper` variable, which means, the attacker has successfully been able to update the `helper` address variable to it's own contract now.
 
@@ -204,13 +204,13 @@ Now the address of the `helper` contract has been overwritten by the address of 
 
 Now when setNum gets called within `Good.sol` it will delegate the call to `Attack.sol` because the address of `helper` contract has been overwritten.
 
-The `setNum` within `Attack.sol` gets executed which sets the `owner` to `msg.sender` which in this case is `Attack.sol` itself because it was the original caller of the `delegatecall` and because owner is at `Slot 1` of `Attack.sol`, the `Slot 1` of `Good.sol` will be overwriten which is its `owner`.
+The `setNum` within `Attack.sol` gets executed which sets the `owner` to `msg.sender` which in this case is `Attack.sol` itself because it was the original caller of the `delegatecall` and because owner is at `Slot 1` of `Attack.sol`, the `Slot 1` of `Good.sol` will be overwritten which is its `owner`.
 
 Boom the attacker was able to change the `owner` of `Good.sol` 👀 🔥
 
 ### Writing the Test
 
-Lets try actually executing this attack using code. We will utilize Hardhat Tests to demonstrate the functionality.
+Let's try actually executing this attack using code. We will utilize Hardhat Tests to demonstrate the functionality.
 
 Inside the `test` folder create a new file named `attack.js` and add the following lines of code
 
@@ -238,7 +238,7 @@ describe("delegatecall Attack", function () {
     await attackContract.deployed();
     console.log("Attack Contract's Address", attackContract.address);
 
-    // Now lets attack the good contract
+    // Now let's attack the good contract
 
     // Start the attack
     let tx = await attackContract.attack();
