@@ -21,7 +21,7 @@ There will be two smart contracts - `Good.sol` and `Attack.sol`. `Good.sol`. Ini
 
 ### Setting up Hardhat
 
-Lets build an example where you can experience how the the attack happens. Start by creating a new project directory.
+Let's build an example where you can experience how the attack happens. Start by creating a new project directory.
 
 ```bash
 mkdir tx-origin
@@ -83,7 +83,7 @@ contract Attack {
 
 ### Writing the test
 
-Now lets try immitating the attack using a sample test, create a new file under `test` folder named `attack.js` and add the following lines of code to it
+Now let's try imitating the attack using a sample test, create a new file under `test` folder named `attack.js` and add the following lines of code to it
 
 ```javascript
 const { expect } = require("chai");
@@ -109,7 +109,7 @@ describe("tx.origin", function () {
     let tx = await attackContract.connect(addr1).attack();
     await tx.wait();
 
-    // Now lets check if the current owner of Good.sol is actually Attack.sol
+    // Now let's check if the current owner of Good.sol is actually Attack.sol
     expect(await goodContract.owner()).to.equal(attackContract.address);
   });
 });
