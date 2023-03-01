@@ -11,7 +11,7 @@ A Denial of Service (DOS) attack is a type of attack that is designed to disable
 
 There will be two smart contracts - `Good.sol` and `Attack.sol`. `Good.sol` will be used to run a sample auction where it will have a function in which the current user can become the current winner of the auction by sending `Good.sol` higher amount of ETH than was sent by the previous winner. After the winner is replaced, the old winner is sent back the money which he initially sent to the contract.
 
-`Attack.sol` will attack in such a manner that after becoming the current winner of the auction, letsit will not allow anyone else to replace it even if the address trying to win is willing to put in more ETH. Thus `Attack.sol` will bring `Good.sol` under a DOS attack because after it becomes the winner, it will deny the ability for any other address to becomes the winner.
+`Attack.sol` will attack in such a manner that after becoming the current winner of the auction, it will not allow anyone else to replace it even if the address trying to win is willing to put in more ETH. Thus `Attack.sol` will bring `Good.sol` under a DOS attack because after it becomes the winner, it will deny the ability for any other address to becomes the winner.
 
 ## ⚒️ Build
 
