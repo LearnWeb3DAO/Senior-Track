@@ -2,7 +2,7 @@
 
 ![image](https://user-images.githubusercontent.com/16539849/174761638-cf7c28d6-f654-4f5b-8fab-569ddc968941.png)
 
-A Denial of Service (DOS) attack is a type of attack that is designed to disable, shut down, or disrupt a network, website, or service. Essentially it means that the attacker somehow can prevent regular users from accessing the network, website, or service therefore denying them service. This is a very common attack which we all know about in web2 as well but today we will try to immitate a Denial of Service attack on a smart contract
+A Denial of Service (DOS) attack is a type of attack that is designed to disable, shut down, or disrupt a network, website, or service. Essentially it means that the attacker somehow can prevent regular users from accessing the network, website, or service therefore denying them service. This is a very common attack which we all know about in web2 as well but today we will try to imitate a Denial of Service attack on a smart contract
 
 <Quiz questionId="545bcf50-01b7-43c6-9abd-d76200651f1c" />
 <Quiz questionId="2273400b-2667-4462-a6e1-2076fa078f50" />
@@ -11,7 +11,7 @@ A Denial of Service (DOS) attack is a type of attack that is designed to disable
 
 There will be two smart contracts - `Good.sol` and `Attack.sol`. `Good.sol` will be used to run a sample auction where it will have a function in which the current user can become the current winner of the auction by sending `Good.sol` higher amount of ETH than was sent by the previous winner. After the winner is replaced, the old winner is sent back the money which he initially sent to the contract.
 
-`Attack.sol` will attack in such a manner that after becoming the current winner of the auction, it will not allow anyone else to replace it even if the address trying to win is willing to put in more ETH. Thus `Attack.sol` will bring `Good.sol` under a DOS attack because after it becomes the winner, it will deny the ability for any other address to becomes the winner.
+`Attack.sol` will attack in such a manner that after becoming the current winner of the auction, letsit will not allow anyone else to replace it even if the address trying to win is willing to put in more ETH. Thus `Attack.sol` will bring `Good.sol` under a DOS attack because after it becomes the winner, it will deny the ability for any other address to becomes the winner.
 
 ## ⚒️ Build
 
@@ -108,11 +108,11 @@ describe("Denial of Service", function () {
     await attackContract.deployed();
     console.log("Attack Contract's Address", attackContract.address);
 
-    // Now lets attack the good contract
+    // Now let's attack the good contract
     // Get two addresses
     const [_, addr1, addr2] = await ethers.getSigners();
 
-    // Initially let addr1 become the current winner of the aution
+    // Initially let addr1 become the current winner of the auction
     let tx = await goodContract.connect(addr1).setCurrentAuctionPrice({
       value: ethers.utils.parseEther("1"),
     });
@@ -124,21 +124,21 @@ describe("Denial of Service", function () {
     });
     await tx.wait();
 
-    // Now lets trying making addr2 the current winner of the auction
+    // Now let's trying making addr2 the current winner of the auction
     tx = await goodContract.connect(addr2).setCurrentAuctionPrice({
       value: ethers.utils.parseEther("4"),
     });
     await tx.wait();
 
-    // Now lets check if the current winner is still attack contract
+    // Now let's check if the current winner is still attack contract
     expect(await goodContract.currentWinner()).to.equal(attackContract.address);
   });
 });
 ```
 
-Notice how `Attack.sol` will lead `Good.sol` into a DOS attack. First `addr1` will become the current winner by calling `setCurrentAuctionPrice` on `Good.sol` then `Attack.sol` will become the current winner by sending more ETH than `addr1` using the attack function. Now when `addr2` will try to become the new winner, it wont be able to do that because of this check(`if (sent)`) present in the `Good.sol` contract which verifies that the current winner should only be changed if the ETH is sent back to the previous current winner.
+Notice how `Attack.sol` will lead `Good.sol` into a DOS attack. First `addr1` will become the current winner by calling `setCurrentAuctionPrice` on `Good.sol` then `Attack.sol` will become the current winner by sending more ETH than `addr1` using the attack function. Now when `addr2` will try to become the new winner, it won't be able to do that because of this check(`if (sent)`) present in the `Good.sol` contract which verifies that the current winner should only be changed if the ETH is sent back to the previous current winner.
 
-Since `Attack.sol` doesnt have a `fallback` function which is necessary to accept ETH payments, `sent` is always `false` and thus the current winner is never updated and `addr2` can never become the current winner
+Since `Attack.sol` doesn't have a `fallback` function which is necessary to accept ETH payments, `sent` is always `false` and thus the current winner is never updated and `addr2` can never become the current winner
 
 ### Test the attack
 
@@ -154,7 +154,7 @@ When the tests pass, you will notice that the `Good.sol` is now under DOS attack
 
 ## 👮 Prevention
 
-- You can create a seperate withdraw function for the previous winners.
+- You can create a separate withdraw function for the previous winners.
 
 Example:
 
