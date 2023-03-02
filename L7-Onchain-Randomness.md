@@ -38,7 +38,7 @@ npx hardhat
 
 when prompted, choose the `Create a Javascript Project` option and follow the steps.
 
-Lets first understand what `abi.encodedPacked` does.
+Let's first understand what `abi.encodedPacked` does.
 
 We have previously used `abi.encode` in the Sophomore NFT tutorial, and earlier in the Merkle Tree tutorial. It is a way to concatenate multiple data types into a single bytes array, which can then be converted to a string. This is used to compute the `tokenURI` of NFT collections often. `encodePacked` takes this a step further, and concatenates multiple values into a single bytes array, but also gets rid of any padding and extra values. What does this mean? Let's take `uint256` as an example. `uint256` has 256 bits in it's number. But, if the value stored is just `1`, using `abi.encode` will create a string that has 255 `0`'s and only 1 `1`. Using `abi.encodePacked` will get rid of all the extra 0's, and just concatenate the value `1`.
 
@@ -104,7 +104,7 @@ contract Attack {
     }
 
     // Attacks the `Game` contract by guessing the exact number because `blockhash` and `block.timestamp`
-    // is accessible publically
+    // is accessible publicly
     function attack() public {
         // `abi.encodePacked` takes in the two params - `blockhash` and `block.timestamp`
         // and returns a byte array which further gets passed into keccak256 which returns `bytes32`
@@ -118,7 +118,7 @@ contract Attack {
         game.guess(_guess);
     }
 
-    // Gets called when the contract recieves ether
+    // Gets called when the contract receives ether
     receive() external payable {}
 }
 ```
@@ -180,7 +180,7 @@ Now open up a terminal pointing to `randomness` folder and execute this
 npx hardhat test
 ```
 
-If all your tests passed, you have sucessfully completed the hack and were able to predict the randomness with 100% accurancy, so it wasn't really that random.
+If all your tests passed, you have successfully completed the hack and were able to predict the randomness with 100% accuracy, so it wasn't really that random.
 
 <Quiz questionId="94e27fa6-a537-42c9-8bd1-6afbd30d51c0" />
 <Quiz questionId="73b3c3b1-8f21-4eb6-8f40-063a509f87b9" />
