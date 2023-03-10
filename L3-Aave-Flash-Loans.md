@@ -96,7 +96,7 @@ npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
 npx hardhat
 ```
 
-when prompted, choose the `Create a Javascript Project` option and follow the steps.
+When prompted, choose the `Create a Javascript Project` option and follow the steps.
 
 Now, let's install the required dependencies for the project.
 
