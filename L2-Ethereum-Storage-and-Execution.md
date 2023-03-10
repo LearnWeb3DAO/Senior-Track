@@ -72,7 +72,7 @@ Messages in Ethereum are passed between two accounts. They consist primarily of 
 
 `data` is a set of bytes, that indicate the type of transaction that needs to take place (transfer ETH, mint an NFT, vote in a DAO, etc) and `value` is the Ether value that is transfered along with the transaction.
 
-Transactions made by EOA's send a mesasge to the recipient account. Contract accounts can also send messages to accounts through the EVM code.
+Transactions made by EOA's send a message to the recipient account. Contract accounts can also send messages to accounts through the EVM code.
 
 ![](https://i.imgur.com/sKTkg6H.png)
 
