@@ -46,7 +46,7 @@ The account state contains a few common things, like the nonce and the balance (
 
 Recall that there are two types of accounts in Ethereum. Externally owned accounts (e.g. Coinbase Wallets, Metamask Wallets, etc.) and Smart Contract Accounts.
 
-EOA's are controlled by private keys, and do not have any EVM code. Contract accounts on the other hand contain EVM code and are controlled by the code itself, and do not have private keys associated with them.
+EOAs are controlled by private keys, and do not have any EVM code. Contract accounts on the other hand contain EVM code and are controlled by the code itself, and do not have private keys associated with them.
 
 ## 💵 Types of Transactions
 
@@ -72,7 +72,7 @@ Messages in Ethereum are passed between two accounts. They consist primarily of 
 
 `data` is a set of bytes, that indicate the type of transaction that needs to take place (transfer ETH, mint an NFT, vote in a DAO, etc) and `value` is the Ether value that is transfered along with the transaction.
 
-Transactions made by EOA's send a message to the recipient account. Contract accounts can also send messages to accounts through the EVM code.
+Transactions made by EOAs send a message to the recipient account. Contract accounts can also send messages to accounts through the EVM code.
 
 ![](https://i.imgur.com/sKTkg6H.png)
 
