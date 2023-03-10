@@ -77,7 +77,7 @@ It has been suggested by Aave to withdraw the funds after a successful arbitrage
 
 ## 🔨Build
 
-Lets build an example where you can experience how we can start a flash loan. Note we won't be actually doing an arbitrage here, because finding profitable arbitrage opportunities is the hardest part and not related to the code, but will essentially just learn how to execute a flash loan.
+Let's build an example where you can experience how we can start a flash loan. Note we won't be actually doing an arbitrage here, because finding profitable arbitrage opportunities is the hardest part and not related to the code, but will essentially just learn how to execute a flash loan.
 
 > NOTE: Just like hedge funds protect their trading strategies, protecting arbitrage opportunities is important for arbitrageurs. If those opportunities are made public, they really aren't opportunities anymore as someone is always willing to 'do it cheaper' driving the profit margin to essentially zero.
 
