@@ -81,7 +81,7 @@ Lets build an example where you can experience how we can start a flash loan. No
 
 > NOTE: Just like hedge funds protect their trading strategies, protecting arbitrage opportunities is important for arbitrageurs. If those opportunities are made public, they really aren't opportunities anymore as someone is always willing to 'do it cheaper' driving the profit margin to essentially zero.
 
-To start the roject, open up your terminal and create a new project directory.
+To start the project, open up your terminal and create a new project directory.
 
 ```bash
 mkdir flash-loans
