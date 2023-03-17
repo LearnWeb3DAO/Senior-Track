@@ -198,7 +198,7 @@ function initialize() public initializer  {
 }
 ```
 
-Another interesting function which we dont see in the normal `ERC721` contract is the `_authorizeUpgrade` which is a function which needs to be implemented by the developer when they import the `UUPSUpgradeable Contract` from Openzeppelin, it can be found [here](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/master/contracts/proxy/utils/UUPSUpgradeable.sol#L100). Now why this function has to be overwritten is intresting because it gives us the ability to add authorization on who can actually upgrade the given contract, it can be changed according to requirements but in our case we just added an `onlyOwner` modifier.
+Another interesting function which we dont see in the normal `ERC721` contract is the `_authorizeUpgrade` which is a function which needs to be implemented by the developer when they import the `UUPSUpgradeable Contract` from Openzeppelin, it can be found [here](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/master/contracts/proxy/utils/UUPSUpgradeable.sol#L100). Now why this function has to be overwritten is interesting because it gives us the ability to add authorization on who can actually upgrade the given contract, it can be changed according to requirements but in our case we just added an `onlyOwner` modifier.
 
 ```solidity
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {
