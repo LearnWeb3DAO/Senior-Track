@@ -91,7 +91,7 @@ The last contract that we will create inside the `contracts` directory is `Malic
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-contract Attack {
+contract Malicious {
     address owner;
     mapping(address => bool) userEligible;
 
