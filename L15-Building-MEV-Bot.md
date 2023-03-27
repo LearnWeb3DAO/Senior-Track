@@ -79,7 +79,6 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 module.exports = {
   solidity: "0.8.17",
   networks: {
-    // Replace goerli with sepolia if you don't want to use goerli
     goerli: {
       url: QUICKNODE_RPC_URL,
       accounts: [PRIVATE_KEY],
@@ -102,7 +101,7 @@ PRIVATE_KEY="YOUR-PRIVATE-KEY"
 QUICKNODE_WS_URL="QUICKNODE_WS_URL"
 ```
 
-To get your `QUICKNODE_RPC_URL` and `QUICKNODE_WS_URL` go to [Quicknode](https://www.quicknode.com/?utm_source=learnweb3&utm_campaign=generic&utm_content=sign-up&utm_medium=learnweb3), sign in, and create a new endpoint. Select `Ethereum` and then `Goerli`, and create the endpoint in `Discover` mode to remain on the free tier.
+To get your `QUICKNODE_RPC_URL` and `QUICKNODE_WS_URL` go to [Quicknode](https://www.quicknode.com/?utm_source=learnweb3&utm_campaign=generic&utm_content=sign-up&utm_medium=learnweb3), sign in, and create a new endpoint. Select `Ethereum` and then `Goerli` or `Sepolia`, and create the endpoint in `Discover` mode to remain on the free tier.
 
 ![](https://i.imgur.com/l5H9Whh.png)
 
