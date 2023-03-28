@@ -278,7 +278,7 @@ npx hardhat run scripts/flashbots.js --network sepolia
 
 After an address is printed on your terminal, go to [Sepolia etherscan](https://sepolia.etherscan.io/) and keep refreshing the page till you see `Mint` transaction appear(Note it takes some time for it to appear cause the flashbot miner has to be the coinbase miner for our bundle to be included in the block)
 
-![](https://i.imgur.com/sVwacVp.png)
+![](https://i.imgur.com/a94Lpam.png)
 
 ![](https://i.imgur.com/Aawg5gK.png)
 
