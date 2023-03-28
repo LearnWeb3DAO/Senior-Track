@@ -6,9 +6,9 @@ We will learn one method today 👀
 
 ## 👀 What will happen?
 
-There will be three contracts - `Attack.sol`, `Helper.sol` and `Good.sol`. User will be able to enter an eligibility list using `Good.sol` which will further call `Helper.sol` to keep track of all the users which are eligible.
+There will be three contracts - `Malicious.sol`, `Helper.sol` and `Good.sol`. User will be able to enter an eligibility list using `Good.sol` which will further call `Helper.sol` to keep track of all the users which are eligible.
 
-`Attack.sol` will be designed in such a way that eligibility list can be manipulated, lets see how 👀
+`Malicious.sol` will be designed in such a way that eligibility list can be manipulated, lets see how 👀
 
 ## ⚒️ Build
 
@@ -91,7 +91,7 @@ The last contract that we will create inside the `contracts` directory is `Malic
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-contract Attack {
+contract Malicious {
     address owner;
     mapping(address => bool) userEligible;
 
@@ -114,11 +114,11 @@ contract Attack {
 }
 ```
 
-You will notice that the fact about `Malicious.sol` is that it will generate the same ABI as `Helper.sol` eventhough it has different code within it. This is because ABI only contains function definitions for public variables, functions and events. So `Malicious.sol` can be typecasted as `Helper.sol`.
+You will notice that the fact about `Malicious.sol` is that it will generate the same ABI as `Helper.sol` even though it has different code within it. This is because ABI only contains function definitions for public variables, functions and events. So `Malicious.sol` can be typecasted as `Helper.sol`.
 
 Now because `Malicious.sol` can be typecasted as `Helper.sol`, a malicious owner can deploy `Good.sol` with the address of `Malicious.sol` instead of `Helper.sol` and users will believe that he is indeed using `Helper.sol` to create the eligibility list.
 
-In our case, the scam will happen as follows. The scammer will first deploy `Good.sol` with the address of `Malicious.sol`. Then when the user will enter the eligibility list using `addUserToList` function which will work fine because the code for this function is same within `Helper.sol` and `Attack.sol`.
+In our case, the scam will happen as follows. The scammer will first deploy `Good.sol` with the address of `Malicious.sol`. Then when the user will enter the eligibility list using `addUserToList` function which will work fine because the code for this function is same within `Helper.sol` and `Malicious.sol`.
 
 The true colours will be observed when the user will try to call `isUserEligible` with his address because now this function will always return `false` because it calls `Malicious.sol`'s `isUserEligible` function which always returns `false` except when its the owner itself, which was not supposed to happen.
 
@@ -189,7 +189,7 @@ contract Good {
 
 Wow, lots of learning right? 🤯
 
-Beaware of scammers, you might need to double check the code of a new dApp you want to put money in.
+Be aware of scammers, you might need to double check the code of a new dApp you want to put money in.
 
 ## 👋 Conclusion
 
