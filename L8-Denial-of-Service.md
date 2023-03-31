@@ -173,7 +173,7 @@ contract Good {
 
     function setCurrentAuctionPrice() public payable {
         require(msg.value > currentAuctionPrice, "Need to pay more than the currentAuctionPrice");
-        balances[currentWinner] += currentAuctionPrice;
+        balances[currentWinner] = msg.value;
         currentAuctionPrice = msg.value;
         currentWinner = msg.sender;
     }
