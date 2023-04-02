@@ -79,7 +79,7 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 module.exports = {
   solidity: "0.8.17",
   networks: {
-    goerli: {
+    sepolia: {
       url: QUICKNODE_RPC_URL,
       accounts: [PRIVATE_KEY],
     },
@@ -87,7 +87,7 @@ module.exports = {
 };
 ```
 
-Note that we are using `goerli` here which is an Ethereum testnet, similar to Rinkeby and Ropsten, but the only one supported by Flashbots.
+Note that we are using `sepolia` here which is an Ethereum testnet, but Flashbots also support `goerli` testnet.
 
 Now its time to set up some environment variables, create a new file `.env` under your root folder, and add the following lines of code to it.
 
@@ -97,13 +97,14 @@ PRIVATE_KEY="YOUR-PRIVATE-KEY"
 QUICKNODE_WS_URL="QUICKNODE_WS_URL"
 ```
 
-To get your `QUICKNODE_RPC_URL` and `QUICKNODE_WS_URL` go to [Quicknode](https://www.quicknode.com/?utm_source=learnweb3&utm_campaign=generic&utm_content=sign-up&utm_medium=learnweb3), sign in, and create a new endpoint. Select `Ethereum` and then `Goerli`, and create the endpoint in `Discover` mode to remain on the free tier.
+To get your `QUICKNODE_RPC_URL` and `QUICKNODE_WS_URL` go to [Quicknode](https://www.quicknode.com/?utm_source=learnweb3&utm_campaign=generic&utm_content=sign-up&utm_medium=learnweb3), sign in, and create a new endpoint. Select `Ethereum` and then `Sepolia`, and create the endpoint in `Discover` mode to remain on the free tier.
 
-![](https://i.imgur.com/l5H9Whh.png)
+![](https://i.imgur.com/fFuECFl.png)
 
-Now copy the `HTTP Provider` url and paste it inplace of `QUICKNODE_RPC_URL` and copy `WSS Provider` and paste it in place of `QUICKNODE_WS_URL`.
+Now copy the `HTTP Provider` url and paste it in place of `QUICKNODE_RPC_URL` and copy `WSS Provider` and paste it in place of `QUICKNODE_WS_URL`.
 
-Replace `YOUR-PRIVATE-KEY` with the private key of an account in which you have Goerli Ether, to get some Goerli ether try out [this faucet](https://goerlifaucet.com/)
+Replace `YOUR-PRIVATE-KEY` with the private key of an account in which you have Sepolia Ether.
+To get some Sepolia ether try out [this faucet](https://sepoliafaucet.com/).
 
 Now it's time to write some code that will help us interact with Flashbots.
 
@@ -128,7 +129,7 @@ async function main() {
   // Create a Quicknode WebSocket Provider
   const provider = new ethers.providers.WebSocketProvider(
     process.env.QUICKNODE_WS_URL,
-    "goerli"
+    "sepolia"
   );
 
   // Wrap your private key in the ethers Wallet class
@@ -140,8 +141,8 @@ async function main() {
     provider,
     signer,
     // URL for the flashbots relayer
-    "https://relay-goerli.flashbots.net",
-    "goerli"
+    "https://relay-sepolia.flashbots.net",
+    "sepolia"
   );
 
   provider.on("block", async (blockNumber) => {
@@ -151,15 +152,15 @@ async function main() {
       [
         {
           transaction: {
-            // ChainId for the Goerli network
-            chainId: 5,
+            // ChainId for the Sepolia network
+            chainId: 11155111,
             // EIP-1559
             type: 2,
             // Value of 1 FakeNFT
             value: ethers.utils.parseEther("0.01"),
             // Address of the FakeNFT
             to: FakeNFT.address,
-            // In the data field, we pass the function selctor of the mint function
+            // In the data field, we pass the function selector of the mint function
             data: FakeNFT.interface.getSighash("mint()"),
             // Max Gas Fes you are willing to pay
             maxFeePerGas: BigNumber.from(10).pow(9).mul(3),
@@ -186,9 +187,9 @@ Now let's try to understand what's happening in these lines of code.
 
 In the initial lines of code, we deployed the `FakeNFT` contract which we wrote.
 
-After that we created an Quicknode WebSocket Provider, a signer and a Flashbots provider. Note the reason why we created a WebSocket provider this time is because we want to create a socket to listen to every new block that comes in `Goerli` network. HTTP Providers, as we had been using previously, work on a request-response model, where a client sends a request to a server, and the server responds back. In the case of WebSockets, however, the client opens a connection with the WebSocket server once, and then the server continuously sends them updates as long as the connection remains open. Therefore the client does not need to send requests again and again.
+After that we created an Quicknode WebSocket Provider, a signer and a Flashbots provider. Note the reason why we created a WebSocket provider this time is because we want to create a socket to listen to every new block that comes in `Sepolia` network. HTTP Providers, as we had been using previously, work on a request-response model, where a client sends a request to a server, and the server responds back. In the case of WebSockets, however, the client opens a connection with the WebSocket server once, and then the server continuously sends them updates as long as the connection remains open. Therefore the client does not need to send requests again and again.
 
-The reason to do that is that all miners in `Goerli` network are not flashbot miners. This means for some blocks it might happen that the bundle of transactions you send dont get included.
+The reason to do that is that all miners in `Sepolia` network are not flashbot miners. This means for some blocks it might happen that the bundle of transactions you send don't get included.
 
 As a reason, we listen for each block and send a request in each block so that when the coinbase miner(miner of the current block) is a flashbots miner, our transaction gets included.
 
@@ -196,7 +197,7 @@ As a reason, we listen for each block and send a request in each block so that w
 // Create a Quicknode WebSocket Provider
 const provider = new ethers.providers.WebSocketProvider(
   process.env.QUICKNODE_WS_URL,
-  "goerli"
+  "sepolia"
 );
 
 // Wrap your private key in the ethers Wallet class
@@ -207,15 +208,15 @@ const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 const flashbotsProvider = await FlashbotsBundleProvider.create(
   provider,
   signer,
-  // URL for the goerli flashbots relayer
-  "https://relay-goerli.flashbots.net",
-  "goerli"
+  // URL for the sepolia flashbots relayer
+  "https://relay-sepolia.flashbots.net",
+  "sepolia"
 );
 ```
 
 After initializing the providers and signers, we use our provider to listen for the `block` event. Every time a `block` event is called, we print the block number and send a bundle of transactions to mint the NFT. Note the bundle we are sending may or may not get included in the current block depending on whether the coinbase miner is a flashbot miner or not.
 
-Now to create the transaction object, we specify the `chainId` which is `5` for Goerli, `type` which is `2` because we will use the `Post-London Upgrade` gas model which is `EIP-1559`. To refresh your memory on how this gas model works, check out the `Gas` module in Sophomore.
+Now to create the transaction object, we specify the `chainId` which is `1115511` for Sepolia, `type` which is `2` because we will use the `Post-London Upgrade` gas model which is `EIP-1559`. To refresh your memory on how this gas model works, check out the `Gas` module in Sophomore.
 
 We specify `value` which is `0.01` because that's the amount for minting 1 NFT and the `to` address which is the address of `FakeNFT` contract.
 
@@ -241,15 +242,15 @@ provider.on("block", async (blockNumber) => {
     [
       {
         transaction: {
-          // ChainId for the Goerli network
-          chainId: 5,
+          // ChainId for the Sepolia network
+          chainId: 11155111,
           // EIP-1559
           type: 2,
           // Value of 1 FakeNFT
           value: ethers.utils.parseEther("0.01"),
           // Address of the FakeNFT
           to: FakeNFT.address,
-          // In the data field, we pass the function selctor of the mint function
+          // In the data field, we pass the function selector of the mint function
           data: FakeNFT.interface.getSighash("mint()"),
           // Max Gas Fees you are willing to pay
           maxFeePerGas: BigNumber.from(10).pow(9).mul(3),
@@ -272,12 +273,12 @@ provider.on("block", async (blockNumber) => {
 Now to run this code, in your terminal pointing to the root directory execute the following command:
 
 ```bash
-npx hardhat run scripts/flashbots.js --network goerli
+npx hardhat run scripts/flashbots.js --network sepolia
 ```
 
-After an address is printed on your terminal, go to [Goerli Etherscan](https://goerli.etherscan.io/) and keep refreshing the page till you see `Mint` transaction appear(Note it takes some time for it to appear cause the flashbot miner has to be the coinbase miner for our bundle to be included in the block)
+After an address is printed on your terminal, go to [Sepolia etherscan](https://sepolia.etherscan.io/) and keep refreshing the page till you see `Mint` transaction appear(Note it takes some time for it to appear cause the flashbot miner has to be the coinbase miner for our bundle to be included in the block)
 
-![](https://i.imgur.com/sVwacVp.png)
+![](https://i.imgur.com/a94Lpam.png)
 
 ![](https://i.imgur.com/Aawg5gK.png)
 
