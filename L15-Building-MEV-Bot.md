@@ -24,7 +24,7 @@ Let's start setting up Hardhat inside the `flashbots` directory.
 ```bash
 cd flashbots
 npm init --yes
-npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
+npm install --save-dev hardhat@2.12.0 @nomicfoundation/hardhat-toolbox@2.0.2
 npx hardhat
 ```
 
