@@ -6,6 +6,8 @@ In the last lesson, we understood what MEV is, what Flashbots are, and some use 
 
 This tutorial is just meant to show you how you use Flashbots to send transactions in the first place, the rest is up to you!
 
+> **⚠️ WARNING:** Following the previous topics, we assume that you have already **created a new wallet for development purposes only with no live funds**. It is essential to only connect to your newly created development Metamask (or any other product you use) wallet when practicing or testing deployments. **Accidential usage of live wallets can result real ETH usage and an unwanted financial cost.**
+
 ## Build
 
 > Note
