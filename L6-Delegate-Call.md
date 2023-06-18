@@ -74,7 +74,7 @@ The actual addition part is not that interesting, what's interesting is that the
 
 <Quiz questionId="bd4b53a7-05a7-4290-b34e-291815a9ddb7" />
 
-You know from the previous lessons that each variable slot in solidity is of 32 bytes which is 256 bits. And when we used `.delegatecall()` from `Student` to `Calculator` we used the storage of `Student` and not of `Calculator` but the problem is that even though we are using the storage of `Student`, the slot numbers are based on the calculator contract and in this case when you assign a value to `result` in the `add` function of `Calculator.sol`, you are actually assigning the value to `mySum` which in the student contract.
+You know from the previous lessons that each variable slot in solidity is of 32 bytes which is 256 bits. And when we used `.delegatecall()` from `Student` to `Calculator` we used the storage of `Student` and not of `Calculator` but the problem is that even though we are using the storage of `Student`, the slot numbers are based on the calculator contract and in this case when you assign a value to `result` in the `add` function of `Calculator.sol`, you are actually assigning the value to `mySum` which is in the student contract.
 
 This can be problematic, because storage slots can have variables of different data types. What if the `Student` contract instead had values defined in this order?
 
