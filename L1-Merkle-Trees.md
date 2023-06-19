@@ -115,7 +115,7 @@ Again, it is important to remember that only one given combination of nodes can 
 For our given example, we only need to provide the following nodes to be able to prove that H[K] actually exists in our nodes:
 ![](https://i.imgur.com/nDe4iYS.png)
 
-At this point, if the computed value of `H(ABCDEFGHIJKLMNOP)` matches the previously known value `r` that the Verifier had, it must be true that `K` existed in the Merkle Tree, or else the hashes wouldn't be the same. 
+At this point, if the computed value of `H(ABCDEFGHIJKLMNOP)` matches the previously known value `r` that the Verifier had, it must be true that `K` existed in the Merkle Tree, or else the hashes wouldn't be the same.
 
 This is *significantly* more efficient than looping over the entire Merkle Tree, as for a tree with `n` number of elements, you only have to provide roughly `log(n)` elements as part of the proof (one for each 'level' of the tree). This means if you had a LOT of data, Merkle Trees are wayyyyy more efficient than storing arrays or mappings.
 
@@ -130,16 +130,16 @@ In Sophomore, we created a Whitelist dApp that stored user addresses in a mappin
 
 At that point, utilizing smart contract storage directly is just infeasible and can easily cost millions of dollars just to whitelist people. On the other hand, you could build up a Merkle Tree and just store the Merkle Root value in the contract - a measly `bytes32` value. In this scenario, the contract is now the `Verifier`, and users who wish to use their whitelist spot for minting NFTs, let's say, become the `Provers` proving that they are indeed part of the whitelist. Let's see how this would work.
 
-## 🧰 Build 
+## 🧰 Build
 
 ### Prerequisites
 - Please learn the basics of Mocha and Chai if you are not aware of them, to understand what they are follow this [tutorial](https://medium.com/spidernitt/testing-with-mocha-and-chai-b8da8d2e10f2)
 
 > Note
- All of these commands should work smoothly . 
+ All of these commands should work smoothly .
  If you are on windows and face Errors Like `Cannot read properties of null (reading 'pickAlgorithm')`
  Try Clearing the NPM cache using `npm cache clear --force`
- 
+
 ----
 
 Let's start building and see how this would practically work. To start the project, open up your terminal and create a new project directory.
@@ -190,13 +190,13 @@ contract Whitelist {
         bool verified = MerkleProof.verify(proof, merkleRoot, leaf);
         return verified;
     }
-    
+
 }
 ```
 
 What's exactly happening here? So as we mentioned we are not storing the address of each user in the contract, instead, we are only storing the root of the merkle tree which gets initialized in the constructor.
 
-We also have another function `checkInWhitelist` which takes in a `proof` and `maxAllowanceToMint`. 
+We also have another function `checkInWhitelist` which takes in a `proof` and `maxAllowanceToMint`.
 `maxAllowanceToMint` is a variable that keeps track of the number of NFT's a given address can mint.
 
 The value we are actually storing in the Merkle Tree, for this use case, is storing the address of the user along with how many NFTs they are allowed to mint. You can store whatever data you want in Merkle Trees, but this works for our example. The hash of the leaf node on which this address exists can be computed by first encoding the address of the sender and the `maxAllowanceToMint` into a bytes string which further gets passed down to the `keccak256` hash function which requires the hash string to generate the hash.
@@ -216,7 +216,8 @@ const { MerkleTree } = require("merkletreejs")
 
 function encodeLeaf(address, spots) {
   // Same as `abi.encodePacked` in Solidity
-  return ethers.utils.defaultAbiCoder.encode(
+  const abiCoder = ethers.AbiCoder.defaultAbiCoder()
+  return abiCoder.encode(
     ["address", "uint64"], // The datatypes of arguments to encode
     [address, spots] // The actual values
   )
@@ -224,11 +225,11 @@ function encodeLeaf(address, spots) {
 
 describe("Merkle Trees", function () {
   it("Should be able to verify if address is in whitelist or not", async function () {
-    
+
     // Get a bunch of test addresses
     // Hardhat returns 10 signers when running in a test environment
     const testAddresses = await ethers.getSigners();
-      
+
     // Create an array of ABI-encoded elements to put in the Merkle Tree
     const list = [
       encodeLeaf(testAddresses[0].address, 2),
@@ -238,7 +239,7 @@ describe("Merkle Trees", function () {
       encodeLeaf(testAddresses[4].address, 2),
       encodeLeaf(testAddresses[5].address, 2),
     ];
-    
+
     // Using keccak256 as the hashing algorithm, create a Merkle Tree
     // We use keccak256 because Solidity supports it
     // We can use keccak256 directly in smart contracts for verification
@@ -248,27 +249,26 @@ describe("Merkle Trees", function () {
       sortPairs: true, // Sort the tree for determinstic output
       sortLeaves: true,
     });
-    
+
     // Compute the Merkle Root in Hexadecimal
     const root = merkleTree.getHexRoot();
-    
+
     // Deploy the Whitelist Contract
-    const whitelist = await ethers.getContractFactory("Whitelist");
-    const Whitelist = await whitelist.deploy(root);
-    await Whitelist.deployed();
-    
+    const Whitelist = await ethers.deployContract("Whitelist", [root]);
+    await Whitelist.waitForDeployment();
+
     // Check for valid addresses
     for (let i = 0; i < 6; i++) {
       // Compute the Merkle Proof for `testAddresses[i]`
       const leaf = keccak256(list[i]); // The hash of the node
       const proof = merkleTree.getHexProof(leaf); // Get the Merkle Proof
-      
+
       // Connect the current address being tested to the Whitelist contract
       // as the 'caller'. So the contract's `msg.sender` value is equal to the value being checked
       // This is done because our contract uses `msg.sender` as the 'original value' for
       // the address when verifying the Merkle Proof
       const connectedWhitelist = await Whitelist.connect(testAddresses[i]);
-      
+
       // Verify that the contract can verify the presence of this address
       // in the Merkle Tree using just the Root provided to it
       // By giving it the Merkle Proof and the original values
@@ -277,7 +277,7 @@ describe("Merkle Trees", function () {
       const verified = await connectedWhitelist.checkInWhitelist(proof, 2);
       expect(verified).to.equal(true);
     }
-    
+
     // Check for invalid addresses
     const verifiedInvalid = await Whitelist.checkInWhitelist([], 2);
     expect(verifiedInvalid).to.equal(false);
