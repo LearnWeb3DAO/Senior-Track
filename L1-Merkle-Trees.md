@@ -212,23 +212,23 @@ Inside your `merkle-trees/test` folder create a new file `merkle-root.js` and ad
 ```javascript
 const { expect } = require("chai");
 const keccak256 = require("keccak256");
-const { MerkleTree } = require("merkletreejs")
+const { MerkleTree } = require("merkletreejs");
+
 
 function encodeLeaf(address, spots) {
   // Same as `abi.encodePacked` in Solidity
-  return ethers.utils.defaultAbiCoder.encode(
+  return ethers.AbiCoder.defaultAbiCoder().encode(
     ["address", "uint64"], // The datatypes of arguments to encode
     [address, spots] // The actual values
-  )
+  );
 }
 
 describe("Merkle Trees", function () {
   it("Should be able to verify if address is in whitelist or not", async function () {
-    
     // Get a bunch of test addresses
     // Hardhat returns 10 signers when running in a test environment
     const testAddresses = await ethers.getSigners();
-      
+
     // Create an array of ABI-encoded elements to put in the Merkle Tree
     const list = [
       encodeLeaf(testAddresses[0].address, 2),
@@ -238,7 +238,7 @@ describe("Merkle Trees", function () {
       encodeLeaf(testAddresses[4].address, 2),
       encodeLeaf(testAddresses[5].address, 2),
     ];
-    
+
     // Using keccak256 as the hashing algorithm, create a Merkle Tree
     // We use keccak256 because Solidity supports it
     // We can use keccak256 directly in smart contracts for verification
@@ -248,27 +248,26 @@ describe("Merkle Trees", function () {
       sortPairs: true, // Sort the tree for determinstic output
       sortLeaves: true,
     });
-    
+
     // Compute the Merkle Root in Hexadecimal
     const root = merkleTree.getHexRoot();
-    
+
     // Deploy the Whitelist Contract
-    const whitelist = await ethers.getContractFactory("Whitelist");
-    const Whitelist = await whitelist.deploy(root);
-    await Whitelist.deployed();
-    
+    const whitelist = await ethers.deployContract("Whitelist", [root]);
+    await whitelist.waitForDeployment()
+
     // Check for valid addresses
     for (let i = 0; i < 6; i++) {
       // Compute the Merkle Proof for `testAddresses[i]`
       const leaf = keccak256(list[i]); // The hash of the node
       const proof = merkleTree.getHexProof(leaf); // Get the Merkle Proof
-      
+
       // Connect the current address being tested to the Whitelist contract
       // as the 'caller'. So the contract's `msg.sender` value is equal to the value being checked
       // This is done because our contract uses `msg.sender` as the 'original value' for
       // the address when verifying the Merkle Proof
-      const connectedWhitelist = await Whitelist.connect(testAddresses[i]);
-      
+      const connectedWhitelist = await whitelist.connect(testAddresses[i]);
+
       // Verify that the contract can verify the presence of this address
       // in the Merkle Tree using just the Root provided to it
       // By giving it the Merkle Proof and the original values
@@ -277,12 +276,12 @@ describe("Merkle Trees", function () {
       const verified = await connectedWhitelist.checkInWhitelist(proof, 2);
       expect(verified).to.equal(true);
     }
-    
+
     // Check for invalid addresses
-    const verifiedInvalid = await Whitelist.checkInWhitelist([], 2);
+    const verifiedInvalid = await whitelist.checkInWhitelist([], 2);
     expect(verifiedInvalid).to.equal(false);
-  })
-})
+  });
+});
 ```
 
 The above code provides explanation in the comments, but let's quickly recap it here.
