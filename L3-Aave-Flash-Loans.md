@@ -274,48 +274,37 @@ Awesome 🚀, we have everything setup now lets go ahead and write the test.
 Inside your `flash-loans/test` folder create a new file `FlashLoanExample.js` and add the following lines of code to it.
 
 ```javascript
-const { expect, assert } = require("chai");
-const hre = require("hardhat");
+const { expect } = require("chai");
+const { ethers, network } = require("hardhat");
 
 const { DAI, DAI_WHALE, POOL_ADDRESS_PROVIDER } = require("../config");
 
-describe("Flash Loans", function () {
+describe("Deploy a Flash Loan", function () {
   it("Should take a flash loan and be able to return it", async function () {
-    const FlashLoanExample = await hre.ethers.getContractFactory(
-      "FlashLoanExample"
-    );
-
-    // Deploy our FlashLoanExample smart contract
-    const flashLoanExample = await FlashLoanExample.deploy(
+    const flashLoanExample = await ethers.deployContract(
       // Address of the PoolAddressProvider: you can find it here: https://docs.aave.com/developers/deployed-contracts/v3-mainnet/polygon
-      POOL_ADDRESS_PROVIDER
+      "FlashLoanExample",
+      [POOL_ADDRESS_PROVIDER]
     );
-    await flashLoanExample.deployed();
+    await flashLoanExample.waitForDeployment();
 
-    // Fetch the DAI smart contract
     const token = await ethers.getContractAt("IERC20", DAI);
+    const BALANCE_AMOUNT_DAI = ethers.parseEther("2000");
 
-    // Move 2000 DAI from DAI_WHALE to our contract by impersonating them
-    const BALANCE_AMOUNT_DAI = ethers.utils.parseEther("2000");
-    await hre.network.provider.request({
+    // Impersonate the DAI_WHALE account to be able to send transactions from that account
+    await network.provider.request({
       method: "hardhat_impersonateAccount",
       params: [DAI_WHALE],
     });
     const signer = await ethers.getSigner(DAI_WHALE);
     await token
       .connect(signer)
-      .transfer(flashLoanExample.address, BALANCE_AMOUNT_DAI); // Sends our contract 2000 DAI from the DAI_WHALE
+      .transfer(flashLoanExample.target, BALANCE_AMOUNT_DAI); // Sends our contract 2000 DAI from the DAI_WHALE
 
-    // Request and execute a flash loan of 10,000 DAI from Aave
-    const txn = await flashLoanExample.createFlashLoan(DAI, 10000);
-    await txn.wait();
-
-    // By this point, we should have executed the flash loan and paid back (10,000 + premium) DAI to Aave
-    // Let's check our contract's remaining DAI balance to see how much it has left
-    const remainingBalance = await token.balanceOf(flashLoanExample.address);
-
-    // Our remaining balance should be <2000 DAI we originally had, because we had to pay the premium
-    expect(remainingBalance.lt(BALANCE_AMOUNT_DAI)).to.equal(true);
+    const tx = await flashLoanExample.createFlashLoan(DAI, 1000); // Borrow 1000 DAI in a Flash Loan with no upfront collateral
+    await tx.wait();
+    const remainingBalance = await token.balanceOf(flashLoanExample.target); // Check the balance of DAI in the Flash Loan contract afterwards
+    expect(remainingBalance).to.be.lt(BALANCE_AMOUNT_DAI); // We must have less than 2000 DAI now, since the premium was paid from our contract's balance
   });
 });
 ```
